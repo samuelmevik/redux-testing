@@ -22,12 +22,14 @@ type Post = yupPost & {
 export type State = {
   posts: Post[];
   status: "idle" | "loading" | "succeeded" | "failed";
+  isFetching: boolean
   error: string | null;
 };
 
 const initialState: State = {
   posts: [],
   status: "idle",
+  isFetching: false,
   error: null,
 };
 
@@ -38,7 +40,7 @@ export const fetchPosts = createAsyncThunk<
 >("posts/fetchPosts", async (_, { rejectWithValue }) => {
   try {
     const response = await axios.get(POSTS_URL);
-    return await postsSchema.validate(response.data)
+    return await postsSchema.validate(response.data);
   } catch (error) {
     if (axios.isAxiosError(error)) {
       return rejectWithValue(error.message);
@@ -46,6 +48,23 @@ export const fetchPosts = createAsyncThunk<
     return rejectWithValue(String(error));
   }
 });
+
+export const addNewPost = createAsyncThunk<
+yupPost,
+  yupPost,
+  { rejectValue: string }
+>("posts/addNewPost", async (post, { rejectWithValue }) => {
+  try {
+    await axios.post(POSTS_URL, post);
+    return post
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return rejectWithValue(error.message);
+    }
+    return rejectWithValue(String(error));
+  }
+});
+
 
 const postSlice = createSlice({
   name: "posts",
@@ -70,8 +89,19 @@ const postSlice = createSlice({
       })
       .addCase(fetchPosts.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message || "Failed to fetch posts";
-      });
+        state.error = action.payload || "Failed to fetch posts";
+      })
+      .addCase(addNewPost.pending, (state) => {
+        state.isFetching = true;
+      })
+      .addCase(addNewPost.fulfilled, (state, action) => {
+        state.posts = [...state.posts, { ...action.payload, date: Date.now() }];
+        state.isFetching = false;
+      })
+      .addCase(addNewPost.rejected, (state, action) => {
+        state.error = action.payload || "Failed to create"
+        state.isFetching = false;
+      })
   },
 });
 export const { postAdded } = postSlice.actions;

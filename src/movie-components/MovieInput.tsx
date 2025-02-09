@@ -7,20 +7,20 @@ const MovieInput = () => {
   const dispatch = useDispatch();
 
   const handleAddMovie = () => {
-    if (!movie) { return }
+    if (!movie) {
+      return;
+    }
     dispatch(addMovie(movie));
   };
 
   return (
     <div>
       <input
-        onChange={(e) =>
-          void setMovie(e.target.value)
-        }
+        onChange={(e) => void setMovie(e.target.value)}
         type="text"
         placeholder="Enter movie name"
       />
-      <button  onClick={handleAddMovie}>Add movie</button>
+      <button onClick={handleAddMovie}>Add movie</button>
     </div>
   );
 };
