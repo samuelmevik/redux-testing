@@ -1,6 +1,6 @@
 import './App.css'
-import MovieInput from './components/MovieInput'
-import MovieList from './components/MovieList'
+import MovieInput from './movie-components/MovieInput'
+import MovieList from './movie-components/MovieList'
 
 function App() {
   return (
