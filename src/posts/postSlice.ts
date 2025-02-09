@@ -50,13 +50,13 @@ export const fetchPosts = createAsyncThunk<
 });
 
 export const addNewPost = createAsyncThunk<
-  yupPost,
+  void,
   yupPost,
   { rejectValue: string }
->("posts/addNewPost", async (post, { rejectWithValue }) => {
+>("posts/addNewPost", async (post, { rejectWithValue, dispatch }) => {
   try {
     await axios.post(POSTS_URL, post);
-    return post;
+    dispatch(fetchPosts())
   } catch (error) {
     if (axios.isAxiosError(error)) {
       return rejectWithValue(error.message);
@@ -93,8 +93,7 @@ const postSlice = createSlice({
       .addCase(addNewPost.pending, (state) => {
         state.isFetching = true;
       })
-      .addCase(addNewPost.fulfilled, (state, action) => {
-        state.posts = [...state.posts, { ...action.payload, date: Date.now() }];
+      .addCase(addNewPost.fulfilled, (state) => {        
         state.isFetching = false;
       })
       .addCase(addNewPost.rejected, (state, action) => {
