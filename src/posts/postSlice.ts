@@ -22,7 +22,7 @@ type Post = yupPost & {
 export type State = {
   posts: Post[];
   status: "idle" | "loading" | "succeeded" | "failed";
-  isFetching: boolean
+  isFetching: boolean;
   error: string | null;
 };
 
@@ -50,13 +50,13 @@ export const fetchPosts = createAsyncThunk<
 });
 
 export const addNewPost = createAsyncThunk<
-yupPost,
+  yupPost,
   yupPost,
   { rejectValue: string }
 >("posts/addNewPost", async (post, { rejectWithValue }) => {
   try {
     await axios.post(POSTS_URL, post);
-    return post
+    return post;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       return rejectWithValue(error.message);
@@ -64,7 +64,6 @@ yupPost,
     return rejectWithValue(String(error));
   }
 });
-
 
 const postSlice = createSlice({
   name: "posts",
@@ -99,9 +98,9 @@ const postSlice = createSlice({
         state.isFetching = false;
       })
       .addCase(addNewPost.rejected, (state, action) => {
-        state.error = action.payload || "Failed to create"
+        state.error = action.payload || "Failed to create";
         state.isFetching = false;
-      })
+      });
   },
 });
 export const { postAdded } = postSlice.actions;
