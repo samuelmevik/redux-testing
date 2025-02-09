@@ -1,6 +1,7 @@
 import './App.css'
 import MovieInput from './movie-components/MovieInput'
 import MovieList from './movie-components/MovieList'
+import PostList from './posts/PostList'
 
 function App() {
   return (
@@ -8,6 +9,7 @@ function App() {
     <div>hej</div>
     <MovieInput />
     <MovieList />
+    <PostList />
     </>
   )
 }
